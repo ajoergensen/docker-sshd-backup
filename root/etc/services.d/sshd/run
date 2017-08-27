@@ -1,0 +1,7 @@
+#!/bin/bash
+set -x
+
+chown -R app:app /config
+usermod -d /config -s /bin/bash app
+
+exec /usr/sbin/sshd -D -e
