@@ -1,8 +1,9 @@
 FROM ajoergensen/openssh-server
 
 RUN \
-	apk upgrade --no-cache && \
-	apk add --no-cache rsync && \
-	tag=$(curl -sX GET "https://api.github.com/repos/borgbackup/borg/releases" | awk '/tag_name/{print $4;exit}' FS='[""]') && \
-	wget https://github.com/borgbackup/borg/releases/download/${tag}/borg-linux64 -O /usr/bin/borg && \
-	chmod -v +x /usr/bin/borg
+	apk -U upgrade && \
+	apk add rsync libacl lz4-libs python3 py3-lz4 py3-msgpack && \
+	apk add --virtual=.builddeps libressl-dev lz4-dev acl-dev build-base py-pip py-setuptools python3-dev linux-headers && \
+	pip3.6 install borgbackup && \
+	apk del .builddeps && \
+	rm -rf /var/cache/apk/*
